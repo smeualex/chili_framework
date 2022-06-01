@@ -178,27 +178,19 @@ void Game::drawCentralFrame() {
 }
 
 void Game::drawCrosshair(const int x, const int y, const int size) {
-	
-	for (int i = x - size / 2; i <= x + size / 2; i++) {
-		gfx.PutPixel(i, y, color);
-	}
-	
-	for (int i = y - size / 2; i <= y + size / 2; i++) {
-		gfx.PutPixel(x, i, color);
-	}
 
-	//gfx.PutPixel(x - 5, y	 , color);
-	//gfx.PutPixel(x - 4, y	 , color);
-	//gfx.PutPixel(x - 3, y	 , color);
-	//gfx.PutPixel(x + 3, y	 , color);
-	//gfx.PutPixel(x + 4, y	 , color);
-	//gfx.PutPixel(x + 5, y	 , color);
-	//gfx.PutPixel(x	  , y - 5, color);
-	//gfx.PutPixel(x	  , y - 4, color);
-	//gfx.PutPixel(x	  , y - 3, color);
-	//gfx.PutPixel(x	  , y + 3, color);
-	//gfx.PutPixel(x	  , y + 4, color);
-	//gfx.PutPixel(x	  , y + 5, color);
+	gfx.PutPixel(x - 5, y	 , color);
+	gfx.PutPixel(x - 4, y	 , color);
+	gfx.PutPixel(x - 3, y	 , color);
+	gfx.PutPixel(x + 3, y	 , color);
+	gfx.PutPixel(x + 4, y	 , color);
+	gfx.PutPixel(x + 5, y	 , color);
+	gfx.PutPixel(x	  , y - 5, color);
+	gfx.PutPixel(x	  , y - 4, color);
+	gfx.PutPixel(x	  , y - 3, color);
+	gfx.PutPixel(x	  , y + 3, color);
+	gfx.PutPixel(x	  , y + 4, color);
+	gfx.PutPixel(x	  , y + 5, color);
 }
 
 void Game::moveAutoMovingCrosshair()
