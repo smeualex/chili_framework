@@ -24,6 +24,11 @@
 #include "Mouse.h"
 #include "Graphics.h"
 
+enum Direction {
+	UP, DOWN, LEFT, RIGHT
+};
+
+
 class Game
 {
 public:
@@ -37,10 +42,51 @@ private:
 	/********************************/
 	/*  User Functions              */
 	/********************************/
+	void handleSpeed();
+
+	void handleColorUpdate();
+
+	void handleColorCenterFrame();
+
+	void handleCrosshairMargins();
+
+	void handleCentralFrameMargins();
+
+	void handleObjectMovement();
+
+	void handleCentralFrameMovement();
+
+	void moveAutoMovingCrosshair();
+
+	void drawCrosshair(const int x, const int y, const int size);
+	void drawCentralFrame();
+
+	bool isCursorInsideCentralFrame() {
+		return frameX <= x && x <= frameX + frameW &&
+			   frameY <= y && y <= frameY + frameH;
+	}
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	int x;
+	int y;
+
+	int x1;
+	int y1;
+	Direction d;
+	
+	Color color;
+	Color oldColor;
+	bool  isColorChanged;
+
+	int speed;
+
+	int frameX;
+	int frameY;
+	int frameW;
+	int frameH;
 };
+
