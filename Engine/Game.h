@@ -62,8 +62,8 @@ private:
 	void drawCentralFrame();
 
 	bool isCursorInsideCentralFrame() {
-		return frameX <= x && x <= frameX + frameW &&
-			   frameY <= y && y <= frameY + frameH;
+		return frameX <= crosshairX && crosshairX <= frameX + frameW &&
+			   frameY <= crosshairY && crosshairY <= frameY + frameH;
 	}
 private:
 	MainWindow& wnd;
@@ -71,12 +71,12 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	int x;
-	int y;
+	int crosshairX;
+	int crosshairY;
 
-	int x1;
-	int y1;
-	Direction d;
+	int autoMovingCrosshairX;
+	int autoMovingCrosshairY;
+	Direction autoMovingCrosshairDirection;
 	
 	Color color;
 	Color oldColor;

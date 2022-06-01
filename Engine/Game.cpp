@@ -25,7 +25,7 @@ Game::Game(MainWindow& wnd)
 	:
 	wnd(wnd),
 	gfx(wnd),
-	x(30), y(40),
+	crosshairX(30), crosshairY(40),
 	color(Colors::Green),
 	oldColor(color),
 	speed(8),
@@ -34,8 +34,8 @@ Game::Game(MainWindow& wnd)
 	frameY(gfx.ScreenHeight / 4),
 	frameW(gfx.ScreenWidth  / 2),
 	frameH(gfx.ScreenHeight / 2),
-	x1(100), y1(100),
-	d(Direction::RIGHT)
+	autoMovingCrosshairX(100), autoMovingCrosshairY(100),
+	autoMovingCrosshairDirection(Direction::RIGHT)
 {
 }
 
@@ -78,19 +78,19 @@ void Game::handleColorUpdate() {
 
 void Game::handleObjectMovement() {
 	if (wnd.kbd.KeyIsPressed(VK_RIGHT)) {
-		x += speed;
+		crosshairX += speed;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_LEFT)) {
-		x -= speed;
+		crosshairX -= speed;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_UP)) {
-		y -= speed;
+		crosshairY -= speed;
 	}
 
 	if (wnd.kbd.KeyIsPressed(VK_DOWN)) {
-		y += speed;
+		crosshairY += speed;
 	}
 }
 
@@ -126,17 +126,17 @@ void Game::handleColorCenterFrame() {
 }
 
 void Game::handleCrosshairMargins() {
-	if (x < 5) {
-		x = 5;
+	if (crosshairX < 5) {
+		crosshairX = 5;
 	}
-	if (x >= gfx.ScreenWidth - 6) {
-		x = gfx.ScreenWidth - 6;
+	if (crosshairX >= gfx.ScreenWidth - 6) {
+		crosshairX = gfx.ScreenWidth - 6;
 	}
-	if (y < 5) {
-		y = 5;
+	if (crosshairY < 5) {
+		crosshairY = 5;
 	}
-	if (y >= gfx.ScreenHeight - 6) {
-		y = gfx.ScreenHeight - 6;
+	if (crosshairY >= gfx.ScreenHeight - 6) {
+		crosshairY = gfx.ScreenHeight - 6;
 	}
 }
 
@@ -155,17 +155,6 @@ void Game::handleCentralFrameMargins() {
 	}
 }
 
-void Game::UpdateModel()
-{
-	handleSpeed();
-	handleColorUpdate();
-	handleColorCenterFrame();
-	handleObjectMovement();
-	handleCentralFrameMovement();
-	handleCrosshairMargins();
-	handleCentralFrameMargins();
-}
-
 void Game::drawCentralFrame() {
 	for (int i = frameX; i < frameX + frameW; i++) {
 		gfx.PutPixel(i, frameY,			 Colors::Gray);
@@ -179,18 +168,12 @@ void Game::drawCentralFrame() {
 
 void Game::drawCrosshair(const int x, const int y, const int size) {
 
-	gfx.PutPixel(x - 5, y	 , color);
-	gfx.PutPixel(x - 4, y	 , color);
-	gfx.PutPixel(x - 3, y	 , color);
-	gfx.PutPixel(x + 3, y	 , color);
-	gfx.PutPixel(x + 4, y	 , color);
-	gfx.PutPixel(x + 5, y	 , color);
-	gfx.PutPixel(x	  , y - 5, color);
-	gfx.PutPixel(x	  , y - 4, color);
-	gfx.PutPixel(x	  , y - 3, color);
-	gfx.PutPixel(x	  , y + 3, color);
-	gfx.PutPixel(x	  , y + 4, color);
-	gfx.PutPixel(x	  , y + 5, color);
+	for (int i = 3; i < size / 2; i++) {
+		gfx.PutPixel(x - i, y,     color);
+		gfx.PutPixel(x + i, y,	   color);
+		gfx.PutPixel(x,		y - i, color);
+		gfx.PutPixel(x,		y + i, color);
+	}
 }
 
 void Game::moveAutoMovingCrosshair()
@@ -207,50 +190,63 @@ void Game::moveAutoMovingCrosshair()
 	//      +---------------+
 	//			<----		(w-30, h-30)
 
-	switch (d) {
+	switch (autoMovingCrosshairDirection) {
 	case Direction::LEFT:
-		if (100 <= x1 && x1 <= gfx.ScreenWidth - 100)
-			x1 -= speed;
-		else if (x1 <= 100) {
-			x1 = 100;
-			d = Direction::UP;
+		if (100 <= autoMovingCrosshairX && autoMovingCrosshairX <= gfx.ScreenWidth - 100)
+			autoMovingCrosshairX -= speed;
+		else if (autoMovingCrosshairX <= 100) {
+			autoMovingCrosshairX = 100;
+			autoMovingCrosshairDirection = Direction::UP;
 		}
 		break;
 	case Direction::RIGHT:
-		if (100 <= x1 && x1 < gfx.ScreenWidth - 100)
-			x1 += speed;
-		else if (x1 >= gfx.ScreenWidth - 100) {
-			x1 = gfx.ScreenWidth - 100;
-			d = Direction::DOWN;
+		if (100 <= autoMovingCrosshairX && autoMovingCrosshairX < gfx.ScreenWidth - 100)
+			autoMovingCrosshairX += speed;
+		else if (autoMovingCrosshairX >= gfx.ScreenWidth - 100) {
+			autoMovingCrosshairX = gfx.ScreenWidth - 100;
+			autoMovingCrosshairDirection = Direction::DOWN;
 		}
 		break;
 	case Direction::UP:
-		if (100 <= y1 && y1 <= gfx.ScreenHeight - 100)
-			y1 -= speed;
-		else if (y1 <= 100) {
-			y1 = 100;
-			d = Direction::RIGHT;
+		if (100 <= autoMovingCrosshairY && autoMovingCrosshairY <= gfx.ScreenHeight - 100)
+			autoMovingCrosshairY -= speed;
+		else if (autoMovingCrosshairY <= 100) {
+			autoMovingCrosshairY = 100;
+			autoMovingCrosshairDirection = Direction::RIGHT;
 		}
 		break;
 	case Direction::DOWN:
-		if (100 <= y1 && y1 < gfx.ScreenHeight - 100)
-			y1 += speed;
-		else if (y1 >= gfx.ScreenHeight - 100) {
-			y1 = gfx.ScreenHeight - 100;
-			d = Direction::LEFT;
+		if (100 <= autoMovingCrosshairY && autoMovingCrosshairY < gfx.ScreenHeight - 100)
+			autoMovingCrosshairY += speed;
+		else if (autoMovingCrosshairY >= gfx.ScreenHeight - 100) {
+			autoMovingCrosshairY = gfx.ScreenHeight - 100;
+			autoMovingCrosshairDirection = Direction::LEFT;
 		}
 		break;
 
 	}
 }
 
+
+
+void Game::UpdateModel()
+{
+	handleSpeed();
+	handleColorUpdate();
+	handleColorCenterFrame();
+	handleObjectMovement();
+	handleCentralFrameMovement();
+	handleCrosshairMargins();
+	handleCentralFrameMargins();
+
+	moveAutoMovingCrosshair();
+}
+
+
 void Game::ComposeFrame()
 {
 	drawCentralFrame();
-	drawCrosshair(x, y, 11);
-
+	drawCrosshair(crosshairX, crosshairY, 11);
 	// self moving crosshair
-	drawCrosshair(x1, y1, 11);
-
-	moveAutoMovingCrosshair();
+	drawCrosshair(autoMovingCrosshairX, autoMovingCrosshairY, 21);
 }
